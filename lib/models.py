@@ -16,14 +16,30 @@ class Company(Base):
     name = Column(String())
     founding_year = Column(Integer())
 
+    devs = relationship('Dev', backref=backref('company'))
+    freebies = relationship('Freebie', secondary='freebies', back_populates='company')
+
     def __repr__(self):
         return f'<Company {self.name}>'
+    
+class Freebie(Base):
+    __tablename__ = 'freebies'
+
+    id = Column(Integer(), primary_key=True)
+    item_name = Column(String())
+    value = Column(Integer())
+
+    company_id = Column(Integer(), ForeignKey('companies.id'))
+    dev_id = Column(Integer(), ForeignKey('devs.id'))
 
 class Dev(Base):
     __tablename__ = 'devs'
 
     id = Column(Integer(), primary_key=True)
     name= Column(String())
+
+    companies = relationship('Company', backref=backref('dev'))
+    freebies = relationship('Freebie', secondary='freebies', back_populates='dev')
 
     def __repr__(self):
         return f'<Dev {self.name}>'
